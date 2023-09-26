@@ -78,7 +78,10 @@ onMounted(() => {
               :dark="false"
               @click.stop="connect"
             />
-            <button v-if="authStore.token" class="p-2 bg-red-400 text-white rounded-md ml-2" @click="logout">
+            <a v-if="authStore.token" class="p-2 bg-blue-400 text-white rounded-md mx-2" href="/analysis">
+              Go to Analysis
+            </a>
+            <button v-if="authStore.token" class="p-2 bg-red-400 text-white rounded-md" @click="logout">
               <Carbon:exit />
             </button>
           </div>
