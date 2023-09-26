@@ -1,0 +1,107 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: traefik:v2.5
+    container_name: traefik
+    deploy:
+      restart_policy:
+        condition: on-failure
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.network=traefik_network"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.localhost`)"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.services.traefik.loadbalancer.server.port=8080"
+    networks:
+      - traefik_network
+
+  consul:
+    container_name: 'consul'
+    image: "consul:1.15"
+    restart: unless-stopped
+    ports:
+      - "8500:8500"
+    networks:
+      - app_network
+      - traefik_network
+
+  analyse-server:
+    container_name: 'analyse-server'
+    build:
+      context: ./analyse-service
+      dockerfile: Dockerfile
+    image: analyse-server:1.0.1
+    env_file:
+      - analyse.env
+    depends_on:
+      - authentication-server
+      - consul
+    networks:
+      - app_network
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
+
+  authentication-server:
+    container_name: 'authentication-server'
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    image: authentication-server:1.0.1
+    env_file:
+      - auth.env
+    networks:
+      - app_network
+    environment:
+      - CONSUL_HTTP_ADDR=consul:8500
+    depends_on:
+      - consul
+
+  ai-server:
+    container_name: 'ai-server'
+    build:
+      context: ./api-ai
+      dockerfile: docker/Dockerfile
+    env_file:
+      - ai.env
+    networks:
+      - app_network
+
+  client:
+    container_name: 'client'
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    networks:
+      - traefik_network
+      - app_network
+    ports:
+      - "4173:4173"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.client.rule=Host(`ainomy.fr`) || Host(`217.160.191.24`)"
+      - "traefik.http.routers.client.entrypoints=web"
+      - "traefik.http.services.client.loadbalancer.server.port=4173"
+    depends_on:
+      - traefik
+      - ai-server
+      - authentication-server
+      - analyse-server
+
+
+networks:
+  traefik_network:
+    external: true
+  app_network:

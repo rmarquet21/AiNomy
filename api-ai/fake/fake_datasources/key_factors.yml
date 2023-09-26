@@ -1,0 +1,15 @@
+- __class: KeyFactor
+  id: 1
+  name: Weakned immune system
+
+- __class: KeyFactor
+  id: 2
+  name: Smoking
+
+- __class: KeyFactor
+  id: 3
+  name: Diabetes
+
+- __class: KeyFactor
+  id: 4
+  name: Kidney disease

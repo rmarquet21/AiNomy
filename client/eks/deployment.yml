@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ainomy-frontend-deployment
+  labels:
+    app: ainomy-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ainomy-frontend
+  template:
+    metadata:
+      labels:
+        app: ainomy-frontend
+    spec:
+      containers:
+      - name: ainomy-frontend
+        image: 089762163498.dkr.ecr.eu-west-3.amazonaws.com/ainomy-frontend:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80

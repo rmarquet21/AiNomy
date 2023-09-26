@@ -1,0 +1,12 @@
+version: '3'
+services:
+    datastore:
+        container_name: 'predict-ai-db-test'
+        image: postgres
+        restart: always
+        ports:
+            - "5432:5432"
+        environment:
+          - POSTGRES_USER=ainomy
+          - POSTGRES_PASSWORD=ainomy
+          - POSTGRES_DB=ainomy

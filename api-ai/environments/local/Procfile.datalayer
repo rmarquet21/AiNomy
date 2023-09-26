@@ -1,0 +1,1 @@
+datastore: docker-compose build; docker-compose up database

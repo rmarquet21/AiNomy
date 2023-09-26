@@ -1,0 +1,2 @@
+web: alfred run:web:gunicorn
+database: docker-compose up database

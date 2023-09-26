@@ -1,0 +1,9 @@
+- __class: Tag
+  id: 1
+  name: LUNG
+  color: 'FF0000'
+
+- __class: Tag
+  id: 2
+  name: LOW MORTALITY RATE
+  color: '00FF00'

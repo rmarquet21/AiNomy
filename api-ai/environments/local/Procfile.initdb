@@ -1,0 +1,2 @@
+datastore: docker-compose build; docker-compose up
+datastore_init: alfred datastore:init; alfred datastore:upgrade

@@ -1,0 +1,26 @@
+version: '3.9'
+name: 'ainomy'
+services:
+  database:
+    container_name: 'ai-postgres'
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=ainomy
+      - POSTGRES_PASSWORD=ainomy
+      - POSTGRES_DB=ainomy
+
+  server:
+    container_name: 'ai-api'
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    environment:
+      - FLASK_DEBUG=1
+      - USE_NNPACK=0
+      - AINOMY_CANONICAL_URL=http://localhost:4000
+      - AINOMY_DATABASE_URL=postgresql://ainomy:ainomy@ai-postgres:5432/ainomy
+    ports:
+      - "4000:4000"
+
