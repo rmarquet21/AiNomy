@@ -4,6 +4,7 @@ import { useMetaMaskWallet } from '../composables/useMetaMaskWallet'
 import { generateChallenge, getAuthorization } from '../../../api/client'
 import { useAuthStore } from '../stores/authentication'
 import { isDark } from '~/common/composables'
+import { notify } from '~/common/utils'
 
 const isOpen = ref(false)
 const authStore = useAuthStore()
@@ -24,6 +25,7 @@ const logout = () => {
 const connect = async () => {
   const accounts = await wallet.connect()
   if (typeof accounts === 'string') {
+    notify('error', accounts)
     console.log(`An error occurred${accounts}`)
     return
   }
@@ -40,6 +42,7 @@ const connect = async () => {
     router.push('/analysis')
   }
   catch (e) {
+    notify('error', e as string)
     console.error(e)
   }
 }
@@ -98,7 +101,15 @@ onMounted(() => {
             </p>
           </div>
           <div>
-            <a class="block sm:inline-block py-4 px-8 mb-4 sm:mb-0 sm:mr-3 text-xs text-white text-center font-semibold leading-none bg-blue-600 hover:bg-blue-700 rounded" href="#">Check Now</a><a class="block sm:inline-block py-4 px-8 text-xs text-gray-500 hover:text-gray-600 text-center font-semibold leading-none bg-gray-100 rounded" href="#">Documentation</a>
+            <button class="block sm:inline-block py-4 px-8 mb-4 sm:mb-0 sm:mr-3 text-xs text-white text-center font-semibold leading-none bg-blue-600 hover:bg-blue-700 rounded" @click="connect" v-if="!authStore.token">
+              Connect Now
+            </button>
+            <a class="block sm:inline-block py-4 px-8 mb-4 sm:mb-0 sm:mr-3 text-xs text-white text-center font-semibold leading-none bg-blue-600 hover:bg-blue-700 rounded" href="/analysis" v-else>
+              Go to Analysis
+            </a>
+            <a class="block sm:inline-block py-4 px-8 text-xs text-gray-500 hover:text-gray-600 text-center font-semibold leading-none bg-gray-100 rounded" href="#">
+              Documentation
+            </a>
           </div>
         </div>
         <div class="relative max-w-3xl mt-6 mb-8 mx-auto">
