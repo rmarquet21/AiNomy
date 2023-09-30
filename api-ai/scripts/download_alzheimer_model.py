@@ -7,9 +7,11 @@ ROOT_DIR = os.path.realpath(os.path.join(__file__, "..", ".."))
 
 
 def download_model_from_s3():
+    models_dir = os.path.join(ROOT_DIR, 'models')
+    os.makedirs(models_dir, exist_ok=True)
     
     # Check if model already exists
-    if os.path.exists(os.path.join(ROOT_DIR, "models", "alzheimer.pt")):
+    if os.path.exists(os.path.join(models_dir, "alzheimer.pt")):
         print("Model already exists")
         return
 
